@@ -14,6 +14,7 @@ id|created_at|name|price|on_sale
 9|2013-04-01 20:09:41.983386|Set of 12 Mason Jars|6.22|f
 10|2013-04-01 20:09:41.984861|Set of silverware|22.99|t
 
+1. Selects the names of all products that are not on sale.
   select * from products where on_sale = 'f';
 id|created_at|name|price|on_sale
 1|2013-04-01 20:09:41.969902|Teddy Bear|17.99|f
@@ -21,6 +22,7 @@ id|created_at|name|price|on_sale
 6|2013-04-01 20:09:41.978579|Card Against Humanity|25.0|f
 9|2013-04-01 20:09:41.983386|Set of 12 Mason Jars|6.22|f
 
+2. Selects the names of all products that cost less than £20.
   select * from products where price < 20.00
 id|created_at|name|price|on_sale
 1|2013-04-01 20:09:41.969902|Teddy Bear|17.99|f
@@ -28,18 +30,22 @@ id|created_at|name|price|on_sale
 5|2013-04-01 20:09:41.977249|Silicon Valley Monopoly|10.99|t
 9|2013-04-01 20:09:41.983386|Set of 12 Mason Jars|6.22|f
 
+3. Selects the name and price of the most expensive product.
   select name, price from products where price = (select max(price) from products);
 name|price
 Cat Ears|99.99
 
+4. Selects the name and price of the second most expensive product.
   select name, price from products where price = (select max(price) from products where price < (select max(price)from products));
 name|price
 Brown Leather Boots|82.0
 
+5. Selects the name and price of the least expensive product.
   select name, price from products where price = (select min(price) from products);
 name|price
 Set of 12 Mason Jars|6.22
 
+6. Selects the names and prices of all products, ordered by price in descending order.
   select name, price from products order by price;
 name|price
 Set of 12 Mason Jars|6.22
@@ -53,18 +59,22 @@ Lonely Pillow|78.82
 Brown Leather Boots|82.0
 Cat Ears|99.99
 
+7. Selects the average price of all products.
   select avg(price) from products;
 avg(price)
 38.899
 
+8. Selects the sum of the price of all products.
   select sum(price) from products;
 sum(price)
 388.99
 
+9. Selects the sum of the price of all products whose prices is less than £20.
   select sum(price) from products where price < 20.00;
 sum(price)
 55.19
 
+10. Selects the id of the user with your name.
   select * from users where name = 'James White';
   -
   insert into users (name) values ('James White');
@@ -72,24 +82,29 @@ sum(price)
 id|created_at|name
 15||James White
 
+11. Selects the names of all users whose names start with the letter "J".
   select name from users where name like "J%";
 name
 Jon Rogers
 James Gotsell
 James White
 
+12. Selects the number of users whose first names are "Spencer".
   select count(name) from users where name like "Spencer%";
 count(name)
 1
 
+13. Selects the number of users who want a "Teddy Bear".
   select count(wishlists.user_id) from wishlists INNER JOIN products ON products.id = wishlists.product_id where products.name = 'Teddy Bear';
 count(wishlists.user_id)
 6
 
+14. Selects the count of items on the wishlish of the user with your name.
   select count(wishlists.product_id) from wishlists INNER JOIN users on users.id = wishlists.user_id where users.name = 'ALex Chin';
 count(wishlists.product_id)
 1  (for the puposes of this I am ALex Chin)
 
+15. Selects the count and name of all products on the wishlist, ordered by count in descending order.
   select count(*), products.name from wishlists inner join products on products.id = wishlists.product_id group by products.name order by count(products.name) desc;
 count(*)|name
 17|Hoodie
@@ -102,6 +117,7 @@ count(*)|name
 2|Lonely Pillow
 2|Set of 12 Mason Jars
 
+16. Selects the count and name of all products that are not on sale on the wishlist, ordered by count in descending order.
   select count(*), products.name from wishlists inner join products on products.id = wishlists.product_id where products.on_sale = 'f' group by products.name order by count(products.name) desc;
 count(*)|name
 16|Card Against Humanity
@@ -109,6 +125,7 @@ count(*)|name
 6|Teddy Bear
 2|Set of 12 Mason Jar
 
+17. Inserts a user with the name "Jonathan Anderson" into the users table. Ensure the created_at column is set to the current time.
     insert into users (name, created_at) values ('Jonathan Anderson', CURRENT_TIMESTAMP);
     select * from users;                                                     
 id|created_at|name
@@ -130,11 +147,15 @@ id|created_at|name
 16|NOW()|Jonathan Anderson
 17|2015-09-03 18:59:43|Jonathan Anderson
 
+CLEANUP:
   delete from users where created_at = 'NOW()';
+
+18. Selects the id of the user with the name "Jonathan Anderson"?
   select id from users where name="Jonathan Anderson";
 id
 17
 
+19. Inserts a wishlist entry for the user with the name "Jonathan Anderson" for the product "The Ruby Programming Language".
   INSERT INTO wishlists (created_at, user_id, product_id) VALUES (CURRENT_TIMESTAMP, (select id from users where name = 'Jonathan Anderson'), (select id from products where name = 'The Ruby Programming Language'));
   
   select * from wishlists;
@@ -217,6 +238,7 @@ id|created_at|user_id|product_id
 77|2013-04-01 20:09:50.145741|10|9
 78|2015-09-03 19:40:12|17|4
 
+20. Updates the name of the "Jonathan Anderson" user to be "Jon Anderson".
   update users set name = 'Jon Anderson' where name = 'Jonathan Anderson';
   select * from users;
 
@@ -238,6 +260,7 @@ id|created_at|name
 15||James White
 17|2015-09-03 18:59:43|Jon Anderson
 
+21. Deletes the user with the name "Jon Anderson".
   delete from users where name = 'Jon Anderson';
   select * from users;
 id|created_at|name
@@ -257,4 +280,5 @@ id|created_at|name
 14|2013-04-01 20:09:41.951026|ALex Chin
 15||James White
 
-
+22. Deletes the wishlist item for the user you just deleted.
+The last question is mental.}
